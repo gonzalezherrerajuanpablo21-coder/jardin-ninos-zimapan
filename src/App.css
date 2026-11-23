@@ -1,0 +1,413 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f2f5f8;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* LOGIN Y REGISTRO */
+.login-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  padding: 35px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-escudo-login {
+  width: 150px;
+  height: auto;
+  margin-bottom: 12px;
+  object-fit: contain;
+}
+
+.login-box h1 {
+  color: #1f8a81;
+  font-size: 2.1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.subtitulo {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-box h3 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 700;
+  align-self: flex-start;
+  margin-bottom: 12px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+input[type="tel"],
+select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #ffffff;
+}
+
+input:focus, select:focus {
+  border-color: #1f8a81;
+}
+
+.btn-ingresar {
+  width: 100%;
+  background-color: #1f8a81;
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.registro-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.btn-link-registro {
+  background: transparent;
+  border: 1px solid #1f8a81;
+  color: #1f8a81;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ESTRUCTURA DE CABECERA CON CENTRADO ABSOLUTO */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header-principal {
+  position: relative;
+  background-color: #1f8a81;
+  color: white;
+  padding: 18px 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 90px;
+}
+
+/* LOGO IZQUIERDO MAS GRANDE Y SIN FONDO BLANCO */
+.header-left {
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+.logo-header-top {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  background-color: transparent; /* Quita el fondo blanco */
+  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25)); /* Sombra suave sin cuadro */
+}
+
+/* TÍTULO CENTRADO PERFECTO EN LA PANTALLA */
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: max-content;
+  z-index: 1;
+}
+
+.header-center h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+.header-center p {
+  font-size: 0.95rem;
+  opacity: 0.92;
+}
+
+/* ICONO DE USUARIO Y NOMBRE MÁS GRANDE */
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 2;
+}
+
+.user-profile-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.icon-user-avatar {
+  width: 42px; /* Aumentado de tamaño */
+  height: 42px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* BARRA DE NAVEGACIÓN Y CERRAR SESIÓN */
+.navbar-principal {
+  background-color: #166861;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+  background-color: #11504b;
+}
+
+.btn-logout-nav {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-logout-nav:hover {
+  background: #c53030;
+}
+
+.container-content {
+  flex: 1;
+  max-width: 1100px;
+  width: 90%;
+  margin: 30px auto;
+}
+
+.dashboard-view h2 {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+
+.subtitle-dash {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.card-dashboard {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+}
+
+.card-dashboard h3 {
+  color: #1f8a81;
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+.card-dashboard p {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.btn-card {
+  background-color: #1f8a81;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.btn-card:hover {
+  background-color: #166861;
+}
+
+.footer-principal {
+  background-color: #e2e8f0;
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  margin-top: auto;
+}
+
+/* =========================================================
+   ESTILOS ADICIONALES: NOTIFICACIONES ANIMADAS (TOAST)
+   ========================================================= */
+
+/* Cartel emergente verde centrado en pantalla con animación suave */
+.toast-exito-animado {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 18px 36px;
+  border-radius: 14px;
+  font-size: 1.15rem;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: popupFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toast-icono {
+  background-color: #ffffff;
+  color: #10b981;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Animación con ligero rebote para el Toast */
+@keyframes popupFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Zoom suave al pasar el cursor sobre cualquier botón del sistema */
+button {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+}
+
+button:hover {
+  transform: scale(1.05) !important; /* Crece un 5% de su tamaño original */
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98) !important; /* Pequeño efecto de pulsado al hacer clic */
+}
+/* Tipografía exclusiva para la cabecera superior */
+.header-principal,
+.header-principal p,
+.header-principal span {
+  font-family: 'Nunito', sans-serif !important;
+}
+
+.header-principal h1 {
+  font-family: 'Fredoka', sans-serif !important;
+  letter-spacing: 0.6px;
+}
+/* =========================================================
+   MARCA DE AGUA INSTITUCIONAL (JARDÍN DE NIÑOS ZIMAPÁN)
+   ========================================================= */
+.con-marca-agua {
+  position: relative;
+}
+
+.marca-agua-global {
+  position: fixed;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 440px;
+  max-width: 75vw;
+  height: auto;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+  filter: grayscale(15%);
+}
+
+.con-marca-agua > *:not(.marca-agua-global) {
+  position: relative;
+  z-index: 1;
+}
