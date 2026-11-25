@@ -411,3 +411,100 @@ button:active {
   position: relative;
   z-index: 1;
 }
+/* =========================================================
+   MENÚ LATERAL TIPO GOOGLE CLASSROOM EN MÓVIL
+   ========================================================= */
+.btn-hamburguesa-movil {
+  display: none;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 7px 9px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-overlay-movil {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  animation: fadeInOverlay 0.2s ease;
+}
+
+.drawer-lateral-movil {
+  width: 285px;
+  max-width: 82vw;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: 6px 0 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: slideInDrawer 0.24s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInDrawer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* REGLAS SOLO PARA CELULAR / TABLET PEQUEÑA */
+@media (max-width: 768px) {
+  .btn-hamburguesa-movil {
+    display: inline-flex;
+  }
+
+  .navbar-desktop {
+    display: none !important;
+  }
+
+  .header-principal {
+    padding: 10px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  .logo-header-top {
+    height: 40px !important;
+    width: auto !important;
+  }
+
+  .header-center {
+    flex: 1;
+    min-width: 0;
+    text-align: left !important;
+  }
+
+  .header-center h1 {
+    font-size: 1.05rem !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .subtitulo-header-desktop {
+    display: none !important;
+  }
+
+  .perfil-pill-desktop {
+    padding: 4px !important;
+    gap: 0 !important;
+  }
+
+  .perfil-info-texto,
+  .btn-salir-desktop {
+    display: none !important;
+  }
+}

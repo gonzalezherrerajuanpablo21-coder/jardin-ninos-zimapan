@@ -21,7 +21,9 @@ import {
   GraduationCap,
   Building2,
   Calendar,
-  Camera
+  Camera,
+  Menu,
+  X
 } from 'lucide-react';
 
 import { Alumnos } from './components/Alumnos';
@@ -37,6 +39,7 @@ export default function App() {
   const [password, setPassword] = useState('');
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(null);
   const [moduloActivo, setModuloActivo] = useState('inicio');
+  const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
   const [vista, setVista] = useState('login');
 
   const [errorLogin, setErrorLogin] = useState('');
@@ -176,6 +179,7 @@ export default function App() {
   const handleLogout = () => {
     setUsuarioAutenticado(null);
     setModuloActivo('inicio');
+    setMenuMovilAbierto(false);
     setUsuario('');
     setPassword('');
     setErrorLogin('');
@@ -775,7 +779,17 @@ export default function App() {
     <div className="main-layout">
       {/* CABECERA */}
       <header className="header-principal" style={{ fontFamily: "'Fredoka', sans-serif" }}>
-        <div className="header-left">
+        <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* BOTÓN HAMBURGUESA SOLO VISIBLE EN CELULAR */}
+          <button
+            type="button"
+            className="btn-hamburguesa-movil"
+            onClick={() => setMenuMovilAbierto(true)}
+            aria-label="Abrir menú"
+          >
+            <Menu size={26} strokeWidth={2.5} />
+          </button>
+
           <img
             src={logoEscudo}
             alt="Escudo Kínder Zimapán"
@@ -785,23 +799,24 @@ export default function App() {
             }}
           />
         </div>
+
         <div className="header-center">
           <h1>Jardín de Niños Zimapán</h1>
-          <p>Sistema de administración escolar</p>
+          <p className="subtitulo-header-desktop">Sistema de administración escolar</p>
         </div>
+
         <div className="header-right">
-          <div style={{
+          <div className="perfil-pill-desktop" style={{
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
             backgroundColor: 'rgba(255, 255, 255, 0.14)',
             backdropFilter: 'blur(6px)',
-            padding: '7px 10px 7px 10px',
+            padding: '7px 10px',
             borderRadius: '50px',
             border: '1px solid rgba(255, 255, 255, 0.28)',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)'
           }}>
-            {/* AVATAR EN CABECERA: FOTO REAL O INICIALES */}
             {usuarioAutenticado.foto ? (
               <div style={{
                 width: '40px',
@@ -847,7 +862,7 @@ export default function App() {
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', lineHeight: '1.2' }}>
+            <div className="perfil-info-texto" style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', lineHeight: '1.2' }}>
               <span style={{ fontWeight: '700', fontSize: '0.92rem', color: '#ffffff' }}>
                 {usuarioAutenticado.nombre}
               </span>
@@ -868,8 +883,8 @@ export default function App() {
               </span>
             </div>
 
-            {/* BOTÓN SALIR INTEGRADO EN EL PERFIL */}
             <button
+              className="btn-salir-desktop"
               onClick={handleLogout}
               title="Cerrar Sesión"
               style={{
@@ -898,9 +913,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* NAVEGACIÓN RESTRICTORA SEGÚN ROL */}
+      {/* NAVEGACIÓN HORIZONTAL (SOLO EN COMPUTADORA) */}
       <nav
-        className="navbar-principal"
+        className="navbar-principal navbar-desktop"
         style={{
           background: 'linear-gradient(90deg, #0c423e 0%, #135e58 50%, #0c423e 100%)',
           padding: '8px 24px',
@@ -970,6 +985,188 @@ export default function App() {
             })}
         </div>
       </nav>
+
+      {/* MENÚ LATERAL DESLIZANTE ESTILO CLASSROOM (SOLO CELULAR) */}
+      {menuMovilAbierto && (
+        <div
+          className="drawer-overlay-movil"
+          onClick={() => setMenuMovilAbierto(false)}
+        >
+          <aside
+            className="drawer-lateral-movil"
+            style={{ fontFamily: "'Fredoka', sans-serif" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* CABECERA DEL CAJÓN LATERAL */}
+            <div style={{
+              padding: '20px 18px',
+              background: 'linear-gradient(135deg, #0f514c 0%, #1b8a82 100%)',
+              color: '#ffffff',
+              borderBottom: '3px solid #f59e0b'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img src={logoEscudo} alt="Escudo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+                  <span style={{ fontWeight: '700', fontSize: '1.1rem' }}>Kínder Zimapán</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMenuMovilAbierto(false)}
+                  style={{
+                    background: 'rgba(255,255,255,0.18)',
+                    border: 'none',
+                    color: '#ffffff',
+                    borderRadius: '50%',
+                    width: '34px',
+                    height: '34px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* TARJETA DE USUARIO EN EL MENÚ LATERAL */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '50%',
+                  backgroundColor: '#f59e0b',
+                  border: '2px solid #ffffff',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: '800',
+                  fontSize: '1rem',
+                  flexShrink: 0
+                }}>
+                  {usuarioAutenticado.foto ? (
+                    <img src={usuarioAutenticado.foto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    usuarioAutenticado.nombre
+                      ? usuarioAutenticado.nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+                      : 'US'
+                  )}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: '700', fontSize: '0.98rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {usuarioAutenticado.nombre}
+                  </div>
+                  <span style={{
+                    display: 'inline-block',
+                    marginTop: '2px',
+                    backgroundColor: 'rgba(0,0,0,0.28)',
+                    color: '#a7f3d0',
+                    fontSize: '0.72rem',
+                    fontWeight: '700',
+                    padding: '2px 9px',
+                    borderRadius: '10px',
+                    textTransform: 'uppercase'
+                  }}>
+                    {usuarioAutenticado.rol}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* LISTA DE MÓDULOS TIPO CLASSROOM */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px 12px 0' }}>
+              <div style={{
+                padding: '6px 20px 10px 20px',
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                color: '#64748b',
+                textTransform: 'uppercase',
+                letterSpacing: '0.6px'
+              }}>
+                Módulos Escolares
+              </div>
+
+              {[
+                { id: 'inicio', label: 'Inicio', icon: Home, visible: true },
+                { id: 'alumnos', label: 'Alumnos', icon: Users, visible: tieneAcceso('alumnos') },
+                { id: 'actividades', label: 'Actividades', icon: Calendar, visible: tieneAcceso('actividades') },
+                { id: 'asistencias', label: 'Asistencias', icon: ClipboardCheck, visible: tieneAcceso('asistencias') },
+                { id: 'medico', label: 'Historial Médico', icon: HeartPulse, visible: tieneAcceso('medico') },
+                { id: 'tutores', label: 'Tutores', icon: UserCheck, visible: tieneAcceso('tutores') },
+                { id: 'maestros', label: 'Maestros', icon: GraduationCap, visible: tieneAcceso('maestros') },
+                { id: 'direccion', label: 'Dirección', icon: Building2, visible: tieneAcceso('direccion') }
+              ]
+                .filter((item) => item.visible)
+                .map((item) => {
+                  const Icono = item.icon;
+                  const activo = moduloActivo === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        setModuloActivo(item.id);
+                        setMenuMovilAbierto(false);
+                      }}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px',
+                        padding: '13px 20px',
+                        marginBottom: '4px',
+                        border: 'none',
+                        borderRadius: '0 30px 30px 0',
+                        backgroundColor: activo ? '#fef3c7' : 'transparent',
+                        color: activo ? '#0f514c' : '#334155',
+                        fontFamily: "'Fredoka', sans-serif",
+                        fontWeight: activo ? '700' : '600',
+                        fontSize: '1rem',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        borderLeft: activo ? '5px solid #f59e0b' : '5px solid transparent'
+                      }}
+                    >
+                      <Icono size={21} color={activo ? '#d97706' : '#0f514c'} strokeWidth={2.3} />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+            </div>
+
+            {/* BOTÓN CERRAR SESIÓN EN LA BASE DEL CAJÓN */}
+            <div style={{ padding: '14px 16px', borderTop: '1px solid #e2e8f0' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuMovilAbierto(false);
+                  handleLogout();
+                }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  backgroundColor: '#fee2e2',
+                  color: '#dc2626',
+                  fontFamily: "'Fredoka', sans-serif",
+                  fontWeight: '700',
+                  fontSize: '0.95rem',
+                  cursor: 'pointer'
+                }}
+              >
+                <LogOut size={18} strokeWidth={2.4} />
+                <span>Cerrar Sesión</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* CONTENIDO PRINCIPAL CON ESCUDO DE ZIMAPÁN DE FONDO TENUE */}
       <main className="container-content con-marca-agua">
