@@ -461,6 +461,7 @@ button:active {
 @media (max-width: 768px) {
   .btn-hamburguesa-movil {
     display: inline-flex;
+    flex-shrink: 0;
   }
 
   .navbar-desktop {
@@ -468,30 +469,43 @@ button:active {
   }
 
   .header-principal {
-    padding: 10px 14px !important;
+    padding: 10px 12px !important;
     display: flex !important;
+    flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 8px !important;
+    gap: 10px !important;
+    position: relative !important;
+  }
+
+  .header-left,
+  .header-right {
+    position: static !important;
+    transform: none !important;
+    flex-shrink: 0 !important;
   }
 
   .logo-header-top {
-    height: 40px !important;
+    height: 36px !important;
     width: auto !important;
+    margin: 0 !important;
   }
 
   .header-center {
-    flex: 1;
-    min-width: 0;
-    text-align: left !important;
+    position: static !important;
+    transform: none !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    text-align: center !important;
   }
 
   .header-center h1 {
-    font-size: 1.05rem !important;
+    font-size: 0.98rem !important;
+    line-height: 1.2 !important;
     margin: 0 !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .subtitulo-header-desktop {
@@ -499,7 +513,7 @@ button:active {
   }
 
   .perfil-pill-desktop {
-    padding: 4px !important;
+    padding: 3px !important;
     gap: 0 !important;
   }
 
