@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 export function Alumnos({ setModuloActivo, usuarioLogueado }) {
-  // Identifica si el usuario actual tiene rol de Tutor
+  // Identifica roles
   const esTutor = usuarioLogueado?.rol === 'Tutor';
+  const esDirectivo =
+    usuarioLogueado?.rol === 'Director' || usuarioLogueado?.rol === 'Administrador';
+
+  // Pestaña activa ('Activo' | 'Antiguo') - solo visible y operable por Directivos
+  const [vistaEstatus, setVistaEstatus] = useState('Activo');
 
   // ==========================================
   // --- ESTADOS PRINCIPALES DE LA APLICACIÓN ---
@@ -199,6 +204,34 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
     });
     setAlumnoSeleccionado(null);
     setMostrarForm(true);
+  };
+
+  // ==========================================
+  // --- MOVER ENTRE ACTIVO Y ANTIGUO (DIRECTIVOS) ---
+  // ==========================================
+  const cambiarEstatusAlumno = async (alumno, nuevoEstatus) => {
+    try {
+      const res = await fetch(`/api/alumnos/${alumno.id_alumno}/estatus`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estatus: nuevoEstatus })
+      });
+
+      if (res.ok) {
+        mostrarNotificacion(
+          nuevoEstatus === 'Antiguo'
+            ? '¡ALUMNO MOVIDO A ANTIGUOS ALUMNOS!'
+            : '¡ALUMNO REACTIVADO EN LISTA ACTUAL!'
+        );
+        setAlumnoSeleccionado(null);
+        await cargarAlumnos();
+      } else {
+        mostrarNotificacion('Error al actualizar el estatus del alumno.');
+      }
+    } catch (error) {
+      console.error("Error al cambiar estatus:", error);
+      mostrarNotificacion('Error de conexión con el servidor.');
+    }
   };
   
   // Al hacer clic en el botón "Eliminar", guardamos el ID para el Modal Personalizado
@@ -806,7 +839,6 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
             </div>
           </div>
         )}
-
         {/* TARJETA PRINCIPAL EXPANSIÓN HORIZONTAL HASTA 1200px */}
         <div style={{
           backgroundColor: '#ffffff',
@@ -838,11 +870,11 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
             Información Completa del Alumno
           </h2>
 
-          {/* ESTRUCTURA GENERAL EN 2 COLUMNAS */}
+          {/* ESTRUCTURA GENERAL EN 2 COLUMNAS (ADAPTABLE EN MÓVIL) */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 340px',
-            gap: '30px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
             marginTop: '25px',
             alignItems: 'start'
           }}>
@@ -874,7 +906,7 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
                     fontWeight: 'bold',
                     letterSpacing: '0.5px'
                   }}>
-                    Alumno Seleccionado
+                    Alumno Seleccionado ({alumnoSeleccionado.estatus || 'Activo'})
                   </span>
                   <h2 style={{ margin: '4px 0 0 0', color: '#0f514c', fontSize: '1.4rem', fontWeight: 'bold' }}>
                     {`${alumnoSeleccionado.nombre} ${alumnoSeleccionado.apellido_paterno} ${alumnoSeleccionado.apellido_materno || ''}`}
@@ -1062,7 +1094,7 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
             </div>
           </div>
 
-        {/* BOTONES DE ACCIÓN EN EL PIE DE PÁGINA */}
+          {/* BOTONES DE ACCIÓN EN EL PIE DE PÁGINA */}
           <div style={{ display: 'flex', gap: '12px', marginTop: '35px', flexWrap: 'wrap' }}>
             {!esTutor && (
               <>
@@ -1081,6 +1113,33 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
                 >
                   Editar Alumno
                 </button>
+
+                {/* BOTÓN EXCLUSIVO PARA DIRECTIVOS: MOVER ENTRE ACTUAL Y ANTIGUOS */}
+                {esDirectivo && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      cambiarEstatusAlumno(
+                        alumnoSeleccionado,
+                        (alumnoSeleccionado.estatus || 'Activo') === 'Activo' ? 'Antiguo' : 'Activo'
+                      )
+                    }
+                    style={{
+                      backgroundColor: (alumnoSeleccionado.estatus || 'Activo') === 'Activo' ? '#64748b' : '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 20px',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '0.95rem'
+                    }}
+                  >
+                    {(alumnoSeleccionado.estatus || 'Activo') === 'Activo'
+                      ? 'Mover a Antiguos Alumnos'
+                      : 'Reactivar como Alumno Actual'}
+                  </button>
+                )}
 
                 {/* BOTÓN ELIMINAR ALUMNO */}
                 <button
@@ -1214,6 +1273,14 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
       </div>
     );
   }
+
+  // Filtrado por rol: Docentes solo ven 'Activo'; Directivos ven según pestaña seleccionada
+  const alumnosFiltrados = alumnos.filter((a) => {
+    const estatusAlumno = a.estatus || 'Activo';
+    if (!esDirectivo) return estatusAlumno === 'Activo';
+    return estatusAlumno === vistaEstatus;
+  });
+
   // =========================================================================
   // --- VISTA 1: TABLA GENERAL DE ALUMNOS REGISTRADOS ---
   // =========================================================================
@@ -1455,10 +1522,61 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
         boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
       }}>
         
-        <div style={{ marginBottom: '15px' }}>
+        {/* ENCABEZADO Y PESTAÑAS EXCLUSIVAS PARA DIRECTIVOS */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          marginBottom: '15px'
+        }}>
           <h2 style={{ margin: 0, color: '#1b8a82' }}>
-            {esTutor ? 'Mis Hijos / Tutelados' : 'Alumnos Registrados'}
+            {esTutor
+              ? 'Mis Hijos / Tutelados'
+              : esDirectivo && vistaEstatus === 'Antiguo'
+                ? 'Antiguos Alumnos (Egresados)'
+                : 'Alumnos Registrados'}
           </h2>
+
+          {esDirectivo && (
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setVistaEstatus('Activo')}
+                style={{
+                  backgroundColor: vistaEstatus === 'Activo' ? '#1b8a82' : '#e2e8f0',
+                  color: vistaEstatus === 'Activo' ? '#ffffff' : '#334155',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                Alumnos Actuales
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMostrarForm(false);
+                  setVistaEstatus('Antiguo');
+                }}
+                style={{
+                  backgroundColor: vistaEstatus === 'Antiguo' ? '#1b8a82' : '#e2e8f0',
+                  color: vistaEstatus === 'Antiguo' ? '#ffffff' : '#334155',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                Antiguos Alumnos
+              </button>
+            </div>
+          )}
         </div>
 
         {/* FORMULARIO AGREGAR / EDITAR ALUMNO */}
@@ -1574,8 +1692,12 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
         {/* TABLA PRINCIPAL DE REGISTROS */}
         {cargando ? (
           <p style={{ color: '#666' }}>Cargando registros desde MySQL...</p>
-        ) : alumnos.length === 0 ? (
-          <p style={{ color: '#888', fontStyle: 'italic' }}>No hay registros de alumnos cargados.</p>
+        ) : alumnosFiltrados.length === 0 ? (
+          <p style={{ color: '#888', fontStyle: 'italic' }}>
+            {esDirectivo && vistaEstatus === 'Antiguo'
+              ? 'No hay alumnos antiguos registrados.'
+              : 'No hay registros de alumnos activos cargados.'}
+          </p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px', marginTop: '10px' }}>
             <thead>
@@ -1586,8 +1708,8 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
                 <th style={{ padding: '12px 15px', textAlign: 'left', borderTopRightRadius: '10px', borderBottomRightRadius: '10px' }}>Fecha de Nacimiento</th>
               </tr>
             </thead>
-           <tbody>
-              {alumnos.map((item, index) => (
+            <tbody>
+              {alumnosFiltrados.map((item, index) => (
                 <tr 
                   key={item.id_alumno || index} 
                   onClick={() => setAlumnoSeleccionado(item)}
@@ -1653,7 +1775,7 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
                           {`${(item.nombre || 'A')[0]}${(item.apellido_paterno || '')[0] || ''}`.toUpperCase()}
                         </div>
                       )}
-                      <span>
+                      <span style={{ whiteSpace: 'nowrap' }}>
                         {`${item.nombre || ''} ${item.apellido_paterno || ''} ${item.apellido_materno || ''}`}
                       </span>
                     </div>
@@ -1686,7 +1808,7 @@ export function Alumnos({ setModuloActivo, usuarioLogueado }) {
         )}
 
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '25px' }}>
-          {!mostrarForm && !esTutor && (
+          {!mostrarForm && !esTutor && vistaEstatus === 'Activo' && (
             <button 
               onClick={() => { resetFormulario(); setMostrarForm(true); }}
               style={{

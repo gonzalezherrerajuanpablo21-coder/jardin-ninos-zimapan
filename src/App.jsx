@@ -1292,7 +1292,8 @@ export default function App() {
                   icon: Users,
                   bg: '#f3e8ff',
                   color: '#7e22ce',
-                  visible: tieneAcceso('alumnos')
+
+                  visible: usuarioLogueado?.rol === 'Director' || usuarioLogueado?.rol === 'Administrador'
                 },
                 {
                   id: 'actividades',

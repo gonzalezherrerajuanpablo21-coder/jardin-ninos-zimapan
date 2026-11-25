@@ -189,8 +189,8 @@ app.get('/api/alumnos', (req, res) => {
 app.post('/api/alumnos', (req, res) => {
   const { nombre, apellido_paterno, apellido_materno, fecha_Nacimiento, CURP, tutor, telefono_contacto } = req.body;
   const sql = `
-    INSERT INTO alumnos (nombre, apellido_paterno, apellido_materno, fecha_Nacimiento, CURP, tutor, telefono_contacto) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO alumnos (nombre, apellido_paterno, apellido_materno, fecha_Nacimiento, CURP, tutor, telefono_contacto, estatus) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'Activo')
   `;
 
   db.query(
@@ -222,6 +222,22 @@ app.put('/api/alumnos/:id', (req, res) => {
       return res.json({ message: 'Alumno actualizado con éxito' });
     }
   );
+});
+
+// Ruta exclusiva para mover alumnos entre Activo y Antiguo (Directivos)
+app.put('/api/alumnos/:id/estatus', (req, res) => {
+  const { id } = req.params;
+  const { estatus } = req.body;
+  const sql = 'UPDATE alumnos SET estatus = ? WHERE id_alumno = ?';
+
+  db.query(sql, [estatus || 'Activo', id], (err) => {
+    if (res.headersSent) return;
+    if (err) {
+      console.error('❌ Error SQL al cambiar estatus del alumno:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+    return res.json({ message: 'Estatus del alumno actualizado con éxito' });
+  });
 });
 
 app.post('/api/alumnos/:id/foto', upload.single('foto'), (req, res) => {
