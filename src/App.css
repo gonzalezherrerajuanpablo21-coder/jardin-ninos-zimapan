@@ -150,8 +150,8 @@ input:focus, select:focus {
   width: 75px;
   height: 75px;
   object-fit: contain;
-  background-color: transparent; /* Quita el fondo blanco */
-  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25)); /* Sombra suave sin cuadro */
+  background-color: transparent;
+  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
 }
 
 /* TÍTULO CENTRADO PERFECTO EN LA PANTALLA */
@@ -193,7 +193,7 @@ input:focus, select:focus {
 }
 
 .icon-user-avatar {
-  width: 42px; /* Aumentado de tamaño */
+  width: 42px;
   height: 42px;
   color: white;
   flex-shrink: 0;
@@ -316,8 +316,6 @@ input:focus, select:focus {
 /* =========================================================
    ESTILOS ADICIONALES: NOTIFICACIONES ANIMADAS (TOAST)
    ========================================================= */
-
-/* Cartel emergente verde centrado en pantalla con animación suave */
 .toast-exito-animado {
   position: fixed;
   top: 50%;
@@ -350,7 +348,6 @@ input:focus, select:focus {
   font-size: 1.1rem;
 }
 
-/* Animación con ligero rebote para el Toast */
 @keyframes popupFade {
   0% {
     opacity: 0;
@@ -362,20 +359,19 @@ input:focus, select:focus {
   }
 }
 
-/* Zoom suave al pasar el cursor sobre cualquier botón del sistema */
 button {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
 }
 
 button:hover {
-  transform: scale(1.05) !important; /* Crece un 5% de su tamaño original */
+  transform: scale(1.05) !important;
   cursor: pointer;
 }
 
 button:active {
-  transform: scale(0.98) !important; /* Pequeño efecto de pulsado al hacer clic */
+  transform: scale(0.98) !important;
 }
-/* Tipografía exclusiva para la cabecera superior */
+
 .header-principal,
 .header-principal p,
 .header-principal span {
@@ -386,6 +382,7 @@ button:active {
   font-family: 'Fredoka', sans-serif !important;
   letter-spacing: 0.6px;
 }
+
 /* =========================================================
    MARCA DE AGUA INSTITUCIONAL (JARDÍN DE NIÑOS ZIMAPÁN)
    ========================================================= */
@@ -411,6 +408,7 @@ button:active {
   position: relative;
   z-index: 1;
 }
+
 /* =========================================================
    MENÚ LATERAL TIPO GOOGLE CLASSROOM EN MÓVIL
    ========================================================= */
@@ -582,11 +580,10 @@ button:active {
     max-width: 100% !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
-    font-size: 16px !important; /* Evita zoom automático en iPhone/Android al escribir */
+    font-size: 16px !important;
     padding: 11px 12px !important;
   }
 
-  /* Botones principales anchos y fáciles de tocar en móvil (excepto botones pequeños dentro de tablas) */
   .container-content form button[type="submit"],
   .container-content > div > button {
     width: 100% !important;
@@ -610,6 +607,19 @@ button:active {
     white-space: nowrap !important;
     padding: 10px 12px !important;
     font-size: 0.88rem !important;
+  }
+
+  /* Evita que las tablas hechas con CSS Grid se corten o amontonen en móvil */
+  .container-content > div > div {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Evita que las columnas de nombres/fechas se aplasten una encima de otra */
+  .container-content div[style*="grid-template-columns"] > div,
+  .container-content div[style*="grid-template-columns"] > span {
+    min-width: 110px;
   }
 
   /* 6. MODALES / VENTANAS EMERGENTES ADAPTADOS AL CELULAR */
