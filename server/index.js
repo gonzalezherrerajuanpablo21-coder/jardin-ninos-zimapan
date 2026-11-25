@@ -123,6 +123,39 @@ app.post('/api/usuarios', upload.single('foto'), (req, res) => {
   );
 });
 
+// Actualizar o subir foto de perfil de un usuario ya registrado
+app.post('/api/usuarios/:id/foto', upload.single('foto'), (req, res) => {
+  const { id } = req.params;
+  if (!req.file) {
+    return res.status(400).json({ error: 'No se seleccionó ninguna imagen' });
+  }
+
+  const fotoUrl = `${getBaseUrl(req)}/uploads/${req.file.filename}`;
+  const sql = 'UPDATE usuarios SET foto = ? WHERE id_usuario = ?';
+
+  db.query(sql, [fotoUrl, id], (err) => {
+    if (res.headersSent) return;
+    if (err) {
+      console.error('❌ Error al actualizar foto de perfil:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+    return res.json({ message: 'Foto de perfil actualizada con éxito', foto: fotoUrl });
+  });
+});
+
+// Eliminar foto de perfil del usuario (opcional)
+app.delete('/api/usuarios/:id/foto', (req, res) => {
+  const { id } = req.params;
+  const sql = 'UPDATE usuarios SET foto = NULL WHERE id_usuario = ?';
+
+  db.query(sql, [id], (err) => {
+    if (res.headersSent) return;
+    if (err) return res.status(500).json({ error: err.message });
+    return res.json({ message: 'Foto de perfil eliminada' });
+  });
+});
+
+
 // ==========================================
 // --- RUTAS API PARA ALUMNOS ---
 // ==========================================

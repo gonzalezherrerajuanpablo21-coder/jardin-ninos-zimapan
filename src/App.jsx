@@ -188,6 +188,43 @@ export default function App() {
     resetFormRegistro();
     setPantallaInicial('landing');
   };
+  const [subiendoFotoPerfil, setSubiendoFotoPerfil] = useState(false);
+
+  const handleActualizarFotoPerfil = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !usuarioAutenticado?.id_usuario) return;
+
+    const formData = new FormData();
+    formData.append('foto', file);
+
+    setSubiendoFotoPerfil(true);
+    try {
+      const res = await fetch(`/api/usuarios/${usuarioAutenticado.id_usuario}/foto`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const actualizado = { ...usuarioAutenticado, foto: data.foto };
+        setUsuarioAutenticado(actualizado);
+        if (localStorage.getItem('usuarioAutenticado')) {
+          localStorage.setItem('usuarioAutenticado', JSON.stringify(actualizado));
+        }
+        if (localStorage.getItem('usuario')) {
+          localStorage.setItem('usuario', JSON.stringify(actualizado));
+        }
+      } else {
+        alert('No se pudo actualizar la foto de perfil.');
+      }
+    } catch (error) {
+      console.error('Error subiendo foto de perfil:', error);
+      alert('Error de conexión al subir la foto.');
+    } finally {
+      setSubiendoFotoPerfil(false);
+      e.target.value = '';
+    }
+  };
 
   // =========================================================================
   // --- VISTA 0: PÁGINA INICIAL PÚBLICA (SIN MARCA DE AGUA) ---
@@ -817,50 +854,99 @@ export default function App() {
             border: '1px solid rgba(255, 255, 255, 0.28)',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)'
           }}>
-            {usuarioAutenticado.foto ? (
-              <div style={{
+            <label
+              title="Haz clic para subir o cambiar tu foto de perfil"
+              style={{
+                position: 'relative',
                 width: '40px',
                 height: '40px',
                 borderRadius: '50%',
-                border: '2px solid #ffffff',
-                padding: '2px',
-                backgroundColor: '#0f514c',
+                cursor: subiendoFotoPerfil ? 'wait' : 'pointer',
                 flexShrink: 0,
-                boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
-              }}>
-                <img
-                  src={usuarioAutenticado.foto}
-                  alt={usuarioAutenticado.nombre}
+                display: 'block'
+              }}
+            >
+              {usuarioAutenticado.foto ? (
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  border: '2px solid #ffffff',
+                  padding: '2px',
+                  backgroundColor: '#0f514c',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
+                }}>
+                  <img
+                    src={usuarioAutenticado.foto}
+                    alt={usuarioAutenticado.nombre}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      display: 'block',
+                      opacity: subiendoFotoPerfil ? 0.5 : 1
+                    }}
+                  />
+                </div>
+              ) : (
+                <div
+                  translate="no"
+                  className="notranslate"
                   style={{
                     width: '100%',
                     height: '100%',
                     borderRadius: '50%',
-                    objectFit: 'cover',
-                    display: 'block'
+                    backgroundColor: '#f59e0b',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '800',
+                    fontSize: '0.95rem',
+                    letterSpacing: '0.5px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
                   }}
-                />
-              </div>
-            ) : (
-              <div style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '50%',
-                backgroundColor: '#f59e0b',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: '800',
-                fontSize: '0.95rem',
-                letterSpacing: '0.5px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                flexShrink: 0
-              }}>
-                {usuarioAutenticado.nombre
-                  ? usuarioAutenticado.nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
-                  : 'US'}
-              </div>
-            )}
+                >
+                  {subiendoFotoPerfil
+                    ? '...'
+                    : usuarioAutenticado.nombre
+                      ? usuarioAutenticado.nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+                      : 'US'}
+                </div>
+              )}
+
+              <span
+                translate="no"
+                className="notranslate"
+                style={{
+                  position: 'absolute',
+                  bottom: '-2px',
+                  right: '-2px',
+                  width: '17px',
+                  height: '17px',
+                  borderRadius: '50%',
+                  backgroundColor: '#1b8a82',
+                  color: '#ffffff',
+                  border: '1.5px solid #ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.62rem',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                }}
+              >
+                📷
+              </span>
+
+              <input
+                type="file"
+                accept="image/*"
+                disabled={subiendoFotoPerfil}
+                onChange={handleActualizarFotoPerfil}
+                style={{ display: 'none' }}
+              />
+            </label>
 
             <div className="perfil-info-texto" style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', lineHeight: '1.2' }}>
               <span style={{ fontWeight: '700', fontSize: '0.92rem', color: '#ffffff' }}>
@@ -1037,7 +1123,6 @@ export default function App() {
                   borderRadius: '50%',
                   backgroundColor: '#f59e0b',
                   border: '2px solid #ffffff',
-                  overflow: 'hidden',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1045,13 +1130,71 @@ export default function App() {
                   fontSize: '1rem',
                   flexShrink: 0
                 }}>
-                  {usuarioAutenticado.foto ? (
-                    <img src={usuarioAutenticado.foto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    usuarioAutenticado.nombre
-                      ? usuarioAutenticado.nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
-                      : 'US'
-                  )}
+                  <label
+  title="Cambiar foto de perfil"
+  style={{
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+    cursor: subiendoFotoPerfil ? 'wait' : 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }}
+>
+  {usuarioAutenticado.foto ? (
+    <img
+      src={usuarioAutenticado.foto}
+      alt=""
+      style={{
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        objectFit: 'cover',
+        opacity: subiendoFotoPerfil ? 0.5 : 1
+      }}
+    />
+  ) : (
+    <span translate="no" className="notranslate">
+      {subiendoFotoPerfil
+        ? '...'
+        : usuarioAutenticado.nombre
+          ? usuarioAutenticado.nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+          : 'US'}
+    </span>
+  )}
+
+  <span
+    translate="no"
+    className="notranslate"
+    style={{
+      position: 'absolute',
+      bottom: '-2px',
+      right: '-2px',
+      width: '17px',
+      height: '17px',
+      borderRadius: '50%',
+      backgroundColor: '#1b8a82',
+      color: '#ffffff',
+      border: '1.5px solid #ffffff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '0.62rem'
+    }}
+  >
+    📷
+  </span>
+
+  <input
+    type="file"
+    accept="image/*"
+    disabled={subiendoFotoPerfil}
+    onChange={handleActualizarFotoPerfil}
+    style={{ display: 'none' }}
+  />
+</label>
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: '700', fontSize: '0.98rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
