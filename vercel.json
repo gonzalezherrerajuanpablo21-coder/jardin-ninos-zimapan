@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://jardin-ninos-zimapan.onrender.com/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://jardin-ninos-zimapan.onrender.com/uploads/:path*"
+    }
+  ]
+}
